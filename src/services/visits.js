@@ -1,5 +1,7 @@
-import { dbServer, visitsDB } from '../../config/database';
 const PouchDB = require('pouchdb');
+
+const dbServer = 'http://localhost:5984';
+const visitsDB = 'visits';
 const db = new PouchDB(visitsDB);
 
 export const visits = {
@@ -21,12 +23,6 @@ export const visits = {
         })
     },
 
-    // fetchAll: () => {
-    //     db.changes().on('change', () {
-    //         console.log('Ch-Ch-Changes');
-    //     });
-    // },
-
     add: (details) => {
         let payload = Object.assign({}, { _id: new Date().toISOString() }, details)
         console.log(payload)
@@ -44,6 +40,12 @@ export const visits = {
                 .then((result) => { resolve(result) })
                 .catch((err) => { reject(err) })
         })
+    },
+
+    subscribe: () => {
+        db.changes().on('change', () => {
+            console.log('Ch-Ch-Changes');
+        });
     },
 
     sync: () => {
