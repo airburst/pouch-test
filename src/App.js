@@ -1,5 +1,6 @@
-import React, { Component } from 'react';
-import { visits } from './services/visits';
+import React, { Component } from 'react'
+import Form from './Form'
+import { visits } from './services/visits'
 
 export default class App extends Component {
 
@@ -19,6 +20,10 @@ export default class App extends Component {
     })
   }
 
+  addPerson = (person) => {
+    console.log(person)
+  }
+
   render() {
     let visitList = this.state.visits.map((v) => {
       return (
@@ -32,6 +37,8 @@ export default class App extends Component {
       <div>
         <h1>Visits</h1>
         {visitList}
+        <hr />
+        <Form addPerson={this.addPerson}/>
       </div>
     )
   }
