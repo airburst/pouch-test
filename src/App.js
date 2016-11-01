@@ -14,22 +14,21 @@ export default class App extends Component {
   }
 
   componentDidMount() {
-    visits.fetchAll().then(v => {
-      this.setState({ visits: v })
-      visits.sync()
+    visits.fetchAll().then(visitData => {
+      this.setState({ visits: visitData.map(v => { return v.doc }) })
     })
+    visits.sync()
   }
 
   addPerson = (person) => {
-    // console.log(person)
     visits.add(person)
   }
 
   render() {
     let visitList = this.state.visits.map((v) => {
       return (
-        <div key={v.key}>
-          <p>v.name</p>
+        <div key={v._id}>
+          <p>{v.personId} : {v.firstname} {v.lastname}</p>
         </div>
       )
     })
