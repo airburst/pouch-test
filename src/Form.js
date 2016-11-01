@@ -3,7 +3,7 @@ import React, { Component } from 'react';
 export default class Form extends Component {
 
   static propTypes = {
-    addPerson: React.PropTypes.func
+    addVisit: React.PropTypes.func
   }
 
   constructor(props) {
@@ -52,7 +52,7 @@ export default class Form extends Component {
         </div>
         <div className="form-row">
           <label className="label"></label>
-          <button onClick={this.props.addPerson.bind(null,this.state)}>Add Person</button>
+          <button onClick={this.props.addVisit.bind(null,this.state)}>Add Person</button>
         </div>
       </div>
     )

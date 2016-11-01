@@ -25,17 +25,18 @@ export const visits = {
 
     add: (details) => {
         let payload = Object.assign({}, { _id: new Date().toISOString() }, details)
-        console.log('visits:add', payload)          //
-        db.put(payload)
-            .then(result => { console.log('Added record', result) })
-            .catch(err => console.log(err))
+        return new Promise((resolve, reject) => {
+            db.put(payload)
+                .then((result) => { resolve(result) })
+                .catch((err) => { reject(err) })
+        })
     },
 
     update: (id, details) => { },
 
     remove: (id) => {
         return new Promise((resolve, reject) => {
-            db.get('mydoc')
+            db.get(id)
                 .then((doc) => { return db.remove(doc) })
                 .then((result) => { resolve(result) })
                 .catch((err) => { reject(err) })

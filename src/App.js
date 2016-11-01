@@ -20,15 +20,19 @@ export default class App extends Component {
     visits.sync()
   }
 
-  addPerson = (person) => {
-    visits.add(person)
+  addVisit = (person) => {
+    visits.add(person).then(result => console.log('Added Visit', result))
+  }
+
+  removeVisit = (id) => {
+    visits.remove(id).then(result => console.log('Removed Visit', result))    // Issue: auto-removing
   }
 
   render() {
     let visitList = this.state.visits.map((v) => {
       return (
         <div key={v._id}>
-          <p>{v.personId} : {v.firstname} {v.lastname}</p>
+          <p>{v.personId} : {v.firstname} {v.lastname} <button onClick={this.removeVisit(v._id)}>Remove</button></p>
         </div>
       )
     })
@@ -38,7 +42,7 @@ export default class App extends Component {
         <h1>Visits</h1>
         {visitList}
         <hr />
-        <Form addPerson={this.addPerson}/>
+        <Form addVisit={this.addVisit}/>
       </div>
     )
   }
