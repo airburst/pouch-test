@@ -1,20 +1,5 @@
-import {visits} from './services/visits';
+import React from 'react';
+import ReactDOM from 'react-dom';
+import App from './App';
 
-class Main {
-
-    constructor() {}
-
-    init() {
-        // Display list of visits
-    }
-
-    test() {
-        // Add a test user
-        visits.add({ name: 'Mark', personId: 'P123456' })
-    }
-
-}
-
-let main = new Main()
-
-main.test()
+ReactDOM.render(<App />, document.getElementById('root'));
