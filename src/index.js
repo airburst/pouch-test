@@ -1,12 +1,20 @@
-#!/usr/bin/env node
-import { install } from 'source-map-support';
-install();
+import {visits} from './services/visits';
 
-import printer from './someModule.js';
+class Main {
 
-console.log(`file path is: ${process.argv[1]}`);
-console.log(`process.cwd: ${process.cwd()}`);
+    constructor() {}
 
-printer();
+    init() {
+        // Display list of visits
+    }
 
-throw new Error('Test! ');
+    test() {
+        // Add a test user
+        visits.add({ name: 'Mark', personId: 'P123456' })
+    }
+
+}
+
+let main = new Main()
+
+main.test()
