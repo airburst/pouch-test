@@ -50,7 +50,8 @@ export const visits = {
     },
 
     sync: () => {
-        db.replicate.to(dbServer + '/' + visitsDB)
+        db.sync(dbServer + '/' + visitsDB, { live: true, retry: true })
+            .on('error', console.log.bind(console));
         console.log('Syncing...')                           //
     }
 }
