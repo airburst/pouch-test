@@ -1,0 +1,26 @@
+{
+  "name": "pouchdb-test",
+  "version": "1.0.0",
+  "description": "PouchDB Test",
+  "main": "./dist/index.js",
+  "scripts": {
+    "start": "npm run dev",
+    "dev": "babel src --out-dir dist --source-maps inline --watch",
+    "build": "babel src --out-dir dist --source-maps inline",
+    "prepublish": "npm run build"
+  },
+  "keywords": [],
+  "author": "Mark Fairhurst",
+  "license": "MIT",
+  "dependencies": {
+    "bootstrap": "^3.3.7",
+    "pouchdb": "^6.0.7",
+    "source-map-support": "^0.4.6"
+  },
+  "devDependencies": {
+    "babel-cli": "^6.18.0",
+    "babel-preset-es2015": "^6.18.0",
+    "babel-plugin-transform-runtime": "^6.15.0",
+    "babel-runtime": "^6.18.0"
+  }
+}
