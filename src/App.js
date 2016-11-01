@@ -21,7 +21,8 @@ export default class App extends Component {
   }
 
   addPerson = (person) => {
-    console.log(person)
+    // console.log(person)
+    visits.add(person)
   }
 
   render() {

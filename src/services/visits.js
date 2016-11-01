@@ -25,7 +25,7 @@ export const visits = {
 
     add: (details) => {
         let payload = Object.assign({}, { _id: new Date().toISOString() }, details)
-        console.log(payload)
+        console.log('visits:add', payload)          //
         db.put(payload)
             .then(result => { console.log('Added record', result) })
             .catch(err => console.log(err))
