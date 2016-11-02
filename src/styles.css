@@ -1,3 +1,25 @@
+.visit-row {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    height: 36px;
+    border: 1px solid #e2e2e2;
+    padding: 5px;
+    margin: 5px 0;
+}
+
+.visit-id {
+    width: 3em;
+}
+
+.visit-name {
+    width: 5em;
+}
+
+.fill {
+    flex: 1;
+}
+
 .form-row {
     height: 36px;
 }

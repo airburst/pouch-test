@@ -4,6 +4,16 @@ const dbServer = 'http://localhost:5984';
 const visitsDB = 'visits';
 const db = new PouchDB(visitsDB);
 
+const makeDoc = (doc) => {
+    let id = (doc._id) ? doc._id : new Date().toISOString()
+    return Object.assign(
+        {},
+        { _id: id },
+        { _rev: doc._rev },
+        doc
+    )
+}
+
 export const visits = {
 
     fetch: (key) => {
@@ -24,7 +34,8 @@ export const visits = {
     },
 
     add: (details) => {
-        let payload = Object.assign({}, { _id: new Date().toISOString() }, details)
+        console.log('this', this)
+        let payload = makeDoc(details)
         return new Promise((resolve, reject) => {
             db.put(payload)
                 .then((result) => { resolve(result) })
@@ -32,7 +43,15 @@ export const visits = {
         })
     },
 
-    update: (id, details) => { },
+    update: (details) => {
+        return new Promise((resolve, reject) => {
+            if (!details._id) { reject({ err: 'No id provided - cannot complete update' })}
+            db.get(details._id)
+                .then((doc) => { return db.put(details) })
+                .then((result) => { resolve(result) })
+                .catch((err) => { reject(err) })
+        })
+    },
 
     remove: (id) => {
         return new Promise((resolve, reject) => {
@@ -43,15 +62,22 @@ export const visits = {
         })
     },
 
-    subscribe: () => {
-        db.changes().on('change', () => {
-            console.log('Ch-Ch-Changes');
-        });
-    },
-
     sync: () => {
         db.sync(dbServer + '/' + visitsDB, { live: true, retry: true })
             .on('error', console.log.bind(console));
         console.log('Syncing...')                           //
+    },
+
+    subscribe: (handleUpdate) => {
+        const changes = db.changes({
+            since: 'now',
+            live: true,
+            include_docs: true
+        })
+            .on('change', (change) => { handleUpdate(change) })
+            .on('complete', (info) => { console.log('Subscription ended', info) })
+            .on('error', function (err) { console.log('Subscription error', err) })
+
+        // changes.cancel(); // whenever you want to cancel
     }
 }

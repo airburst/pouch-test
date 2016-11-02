@@ -9,15 +9,20 @@ export default class App extends Component {
   }
 
   constructor(props) {
-    super(props);
-    this.state = { visits: [] };
+    super(props)
+    this.state = { visits: [] }
   }
 
   componentDidMount() {
-    visits.fetchAll().then(visitData => {
-      this.setState({ visits: visitData.map(v => { return v.doc }) })
+    visits.fetchAll().then(data => {
+      this.setState({ visits: data.map(v => { return v.doc }) })
     })
+    visits.subscribe(this.handleChange)
     visits.sync()
+  }
+
+  handleChange = (changes) => {
+    console.log(changes.doc)
   }
 
   addVisit = (person) => {
@@ -25,14 +30,23 @@ export default class App extends Component {
   }
 
   removeVisit = (id) => {
-    visits.remove(id).then(result => console.log('Removed Visit', result))    // Issue: auto-removing
+    visits.remove(id).then(result => console.log('Removed Visit', result))
+  }
+
+  changeVisit = (doc) => {
+    visits.update(doc).then(result => console.log('Removed Visit', result))
   }
 
   render() {
     let visitList = this.state.visits.map((v) => {
       return (
-        <div key={v._id}>
-          <p>{v.personId} : {v.firstname} {v.lastname} <button onClick={this.removeVisit(v._id)}>Remove</button></p>
+        <div key={v._id} className="visit-row">
+          <span className="visit-id">{v.personId}:</span>
+          <span className="visit-name">{v.firstname} {v.lastname}</span>
+          <span className="fill"></span>
+          <span className="visit-remove">
+            <button onClick={() => { this.removeVisit(v._id) } }>Remove</button>
+          </span>
         </div>
       )
     })
@@ -48,3 +62,7 @@ export default class App extends Component {
   }
 
 }
+
+          // <span className="visit-change">
+          //   <button onClick={() => { this.changeVisit(v) } }>Change</button>
+          // </span>
