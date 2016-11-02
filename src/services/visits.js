@@ -1,9 +1,8 @@
-const PouchDB = require('pouchdb');
+const PouchDB = require('pouchdb')
 
-const dbServer = 'http://localhost:5984';
-const visitsDB = 'visits';
-const db = new PouchDB(visitsDB);
-
+const dbServer = 'http://localhost:5984'
+const visitsDB = 'visits'
+const db = new PouchDB(visitsDB)
 const makeDoc = (doc) => {
     let id = (doc._id) ? doc._id : new Date().toISOString()
     return Object.assign(
@@ -13,15 +12,9 @@ const makeDoc = (doc) => {
         doc
     )
 }
+let syncToken = {}
 
 export const visits = {
-
-    // Not Needed Yet    
-    // fetch: (key) => {
-    //     db.get(key)
-    //         .then((doc) => { console.log(doc) })
-    //         .catch((err) => { console.log('Error fetching doc', key, err) })
-    // },
 
     fetchAll: () => {
         return new Promise((resolve, reject) => {
@@ -65,11 +58,11 @@ export const visits = {
     sync: () => {
         db.sync(dbServer + '/' + visitsDB, { live: true, retry: true })
             .on('error', console.log.bind(console));
-        // console.log('Syncing...')
+        // console.log('Syncing with ' + visitsDB + ' db')
     },
 
     subscribe: (handleUpdate) => {
-        const changes = db.changes({
+        syncToken = db.changes({
             since: 'now',
             live: true,
             include_docs: true
@@ -80,6 +73,7 @@ export const visits = {
     },
 
     unsubscribe: () => {
-        // changes.cancel(); // need to hook changes into a class property
+        syncToken.cancel()
+        console.log('Stopped syncing with ' + visitsDB + ' db')
     }
 }

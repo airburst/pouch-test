@@ -10,13 +10,24 @@ export default class App extends Component {
 
   constructor(props) {
     super(props)
-    this.state = { visits: [] }
+    this.state = {
+      visits: [],
+      selectedPerson: {
+        firstname: '',
+        lastname: '',
+        personId: ''
+      }
+    }
   }
 
   componentDidMount() {
     this.updateVisitsList()
     visits.subscribe(this.handleChange)
     visits.sync()
+  }
+
+  componentWillUnmount() {
+    visits.unsubscribe()
   }
 
   handleChange = (changes) => {
@@ -39,14 +50,19 @@ export default class App extends Component {
   }
 
   changeVisit = (doc) => {
-    visits.update(doc).then(result => console.log('Removed Visit', result))
+    visits.update(doc).then(result => console.log('Updated Visit', result))
+  }
+
+  selectPerson(person) {
+    console.log(person)
+    this.setState({ selectedPerson: person })
   }
 
   render() {
     let visitList = this.state.visits.map((v) => {
       return (
-        <div key={v._id} className="visit-row">
-          <span className="visit-id">{v.personId}:</span>
+        <div key={v._id} className="visit-row" onClick={() => { this.selectPerson(v) } }>
+          <span className="visit-id">{v.personId}</span>
           <span className="visit-name">{v.firstname} {v.lastname}</span>
           <span className="fill"></span>
           <span className="visit-remove">
@@ -60,8 +76,9 @@ export default class App extends Component {
       <div>
         <h1>Visits</h1>
         {visitList}
-        <hr />
-        <Form addVisit={this.addVisit}/>
+        <Form
+          person={this.state.selectedPerson}
+          addVisit={this.addVisit} />
       </div>
     )
   }

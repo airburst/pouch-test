@@ -3,56 +3,75 @@ import React, { Component } from 'react';
 export default class Form extends Component {
 
   static propTypes = {
-    addVisit: React.PropTypes.func
+    addVisit: React.PropTypes.func,
+    person: React.PropTypes.object
   }
 
   constructor(props) {
-    super(props);
-    this.state = { 
-      firstname: '',
-      lastname: '',
-      personId: '',
+    super(props)
+    this.state = {
+      person: this.props.person,
+      mode: 'add'
+    }
+  }
+
+  componentWillUpdate(nextProps) {
+    if (JSON.stringify(nextProps.person) !== JSON.stringify(this.props.person)) {
+      this.setState({
+        person: nextProps.person,
+        mode: 'change'
+      })
     }
   }
 
   updateFirstName = (e) => {
-    this.setState({ firstname: e.target.value });
+    this.setState({ person: { firstname: e.target.value }})
   }
 
   updateLastName = (e) => {
-    this.setState({ lastname: e.target.value });
+    this.setState({ person: { lastname: e.target.value }})
   }
 
   updatePersonId = (e) => {
-    this.setState({ personId: e.target.value });
+    this.setState({ person: { personId: e.target.value }})
   }
 
-  reset() {
-    this.setState({ 
-      firstname: '',
-      lastname: '',
-      personId: '',
+  reset = () => {
+    this.setState({
+      person: {
+        firstname: '',
+        lastname: '',
+        personId: '',
+        _id: '',
+        _rev: ''
+      },
+      mode: 'add'
     })
   }
 
   render() {
+    const Button = (this.state.mode === 'add')
+      ? (<button className="btn" onClick={() => { this.props.addVisit.bind(null, this.state.person) } }>Add Person</button>)
+      : (<button className="btn" onClick={() => { this.props.changeVisit.bind(null, this.state.person) } }>Change Person</button>)
+    
     return (
-      <div>
+      <div className="form-container">
         <div className="form-row">
           <label className="label">First name</label>
-          <input type="text" value={this.state.firstname} onChange={this.updateFirstName} />
+          <input type="text" value={this.state.person.firstname} onChange={this.updateFirstName} />
         </div>
         <div className="form-row">
           <label className="label">Surname</label>
-          <input type="text" value={this.state.lastname} onChange={this.updateLastName} />
+          <input type="text" value={this.state.person.lastname} onChange={this.updateLastName} />
         </div>
         <div className="form-row">
           <label className="label">Person Id</label>
-          <input type="text" value={this.state.personId} onChange={this.updatePersonId} />
+          <input type="text" value={this.state.person.personId} onChange={this.updatePersonId} />
         </div>
         <div className="form-row">
           <label className="label"></label>
-          <button onClick={this.props.addVisit.bind(null,this.state)}>Add Person</button>
+          {Button}
+          <button className="btn" onClick={this.reset}>Clear</button>
         </div>
       </div>
     )
