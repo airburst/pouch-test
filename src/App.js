@@ -78,7 +78,8 @@ export default class App extends Component {
         {visitList}
         <Form
           person={this.state.selectedPerson}
-          addVisit={this.addVisit} />
+          addVisit={this.addVisit}
+          changeVisit={this.changeVisit}/>
       </div>
     )
   }

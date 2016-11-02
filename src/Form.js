@@ -25,15 +25,18 @@ export default class Form extends Component {
   }
 
   updateFirstName = (e) => {
-    this.setState({ person: { firstname: e.target.value }})
+    let p = Object.assign({}, this.state.person, { firstname: e.target.value })
+    this.setState({ person: p})
   }
 
   updateLastName = (e) => {
-    this.setState({ person: { lastname: e.target.value }})
+    let p = Object.assign({}, this.state.person, { lastname: e.target.value })
+    this.setState({ person: p})
   }
 
   updatePersonId = (e) => {
-    this.setState({ person: { personId: e.target.value }})
+    let p = Object.assign({}, this.state.person, { personId: e.target.value })
+    this.setState({ person: p})
   }
 
   reset = () => {
@@ -51,8 +54,8 @@ export default class Form extends Component {
 
   render() {
     const Button = (this.state.mode === 'add')
-      ? (<button className="btn" onClick={() => { this.props.addVisit.bind(null, this.state.person) } }>Add Person</button>)
-      : (<button className="btn" onClick={() => { this.props.changeVisit.bind(null, this.state.person) } }>Change Person</button>)
+      ? (<button className="btn" onClick={this.props.addVisit.bind(null, this.state.person)}>Add Person</button>)
+      : (<button className="btn" onClick={this.props.changeVisit.bind(null, this.state.person)}>Change Person</button>)
     
     return (
       <div className="form-container">

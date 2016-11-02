@@ -37,6 +37,7 @@ export const visits = {
     },
 
     update: (details) => {
+        console.log('Changing', details)
         return new Promise((resolve, reject) => {
             if (!details._id) { reject({ err: 'No id provided - cannot complete update' })}
             db.get(details._id)
