@@ -14,15 +14,20 @@ export default class App extends Component {
   }
 
   componentDidMount() {
-    visits.fetchAll().then(data => {
-      this.setState({ visits: data.map(v => { return v.doc }) })
-    })
+    this.updateVisitsList()
     visits.subscribe(this.handleChange)
     visits.sync()
   }
 
   handleChange = (changes) => {
-    console.log(changes.doc)
+    this.updateVisitsList()
+    // console.log(changes.doc)
+  }
+
+  updateVisitsList() {
+    visits.fetchAll().then(data => {
+      this.setState({ visits: data.map(v => { return v.doc }) })
+    })
   }
 
   addVisit = (person) => {

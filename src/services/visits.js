@@ -16,11 +16,12 @@ const makeDoc = (doc) => {
 
 export const visits = {
 
-    fetch: (key) => {
-        db.get(key)
-            .then((doc) => { console.log(doc) })
-            .catch((err) => { console.log('Error fetching doc', key, err) })
-    },
+    // Not Needed Yet    
+    // fetch: (key) => {
+    //     db.get(key)
+    //         .then((doc) => { console.log(doc) })
+    //         .catch((err) => { console.log('Error fetching doc', key, err) })
+    // },
 
     fetchAll: () => {
         return new Promise((resolve, reject) => {
@@ -34,7 +35,6 @@ export const visits = {
     },
 
     add: (details) => {
-        console.log('this', this)
         let payload = makeDoc(details)
         return new Promise((resolve, reject) => {
             db.put(payload)
@@ -47,7 +47,7 @@ export const visits = {
         return new Promise((resolve, reject) => {
             if (!details._id) { reject({ err: 'No id provided - cannot complete update' })}
             db.get(details._id)
-                .then((doc) => { return db.put(details) })
+                .then((doc) => { return db.put(makeDoc(details)) })
                 .then((result) => { resolve(result) })
                 .catch((err) => { reject(err) })
         })
@@ -65,7 +65,7 @@ export const visits = {
     sync: () => {
         db.sync(dbServer + '/' + visitsDB, { live: true, retry: true })
             .on('error', console.log.bind(console));
-        console.log('Syncing...')                           //
+        // console.log('Syncing...')
     },
 
     subscribe: (handleUpdate) => {
@@ -77,7 +77,9 @@ export const visits = {
             .on('change', (change) => { handleUpdate(change) })
             .on('complete', (info) => { console.log('Subscription ended', info) })
             .on('error', function (err) { console.log('Subscription error', err) })
+    },
 
-        // changes.cancel(); // whenever you want to cancel
+    unsubscribe: () => {
+        // changes.cancel(); // need to hook changes into a class property
     }
 }
