@@ -4,12 +4,11 @@ const dbServer = 'http://localhost:5984'
 const visitsDB = 'visits'
 const db = new PouchDB(visitsDB)
 const makeDoc = (doc) => {
-    let id = (doc._id) ? doc._id : new Date().toISOString()
+    let id = (doc._id !== "") ? doc._id : new Date().toISOString()
     return Object.assign(
         {},
-        { _id: id },
-        { _rev: doc._rev },
-        doc
+        doc,
+        { _id: id }
     )
 }
 let syncToken = {}
@@ -29,6 +28,7 @@ export const visits = {
 
     add: (details) => {
         let payload = makeDoc(details)
+        console.log('About to add', payload)                //
         return new Promise((resolve, reject) => {
             db.put(payload)
                 .then((result) => { resolve(result) })
@@ -37,7 +37,7 @@ export const visits = {
     },
 
     update: (details) => {
-        console.log('Changing', details)
+        console.log('About to Change', details)            //
         return new Promise((resolve, reject) => {
             if (!details._id) { reject({ err: 'No id provided - cannot complete update' })}
             db.get(details._id)
