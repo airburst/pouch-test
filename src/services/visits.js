@@ -1,10 +1,12 @@
 const PouchDB = require('pouchdb')
 
-const dbServer = 'http://localhost:5984'
+const dbServer = 'http://51.254.135.229:5984'
 const visitsDB = 'visits'
 const db = new PouchDB(visitsDB)
 const makeDoc = (doc) => {
-    let id = (doc._id !== "") ? doc._id : new Date().toISOString()
+    console.log('makeDoc', doc)
+    let id = (doc._id && (doc._id !== "")) ? doc._id : new Date().toISOString()
+    console.log('id', id)
     return Object.assign(
         {},
         doc,
