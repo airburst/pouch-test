@@ -1,6 +1,9 @@
 import React, { Component } from 'react'
 import Form from './Form'
-import { visits } from './services/visits'
+// import { visits } from './services/visits'
+import { PouchService } from './services/pouchService'
+
+const visits = new PouchService('visits', 'http://51.254.135.229:5984')
 
 export default class App extends Component {
 
@@ -49,6 +52,11 @@ export default class App extends Component {
     visits.remove(id).then(result => console.log('Removed Visit', result))
   }
 
+  completeVisit = (record) => {
+    let completedRecord = Object.assign({}, record, { status: 'completed' })
+    visits.update(completedRecord).then(result => console.log('Completed Visit', result))
+  }
+
   changeVisit = (doc) => {
     visits.update(doc).then(result => console.log('Updated Visit', result))
   }
@@ -65,6 +73,9 @@ export default class App extends Component {
           <span className="visit-id">{v.personId}</span>
           <span className="visit-name">{v.firstname} {v.lastname}</span>
           <span className="fill"></span>
+          <span className="visit-complete">
+            <button onClick={() => { this.completeVisit(v) } }>Complete</button>
+          </span>
           <span className="visit-remove">
             <button onClick={() => { this.removeVisit(v._id) } }>Remove</button>
           </span>
