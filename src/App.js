@@ -1,9 +1,13 @@
 import React, { Component } from 'react'
 import Form from './Form'
-// import { visits } from './services/visits'
 import { PouchService } from './services/pouchService'
+import { hexEncode } from './services/hexEncoder'
 
-const visits = new PouchService('visits', 'http://51.254.135.229:5984')
+//const visits = new PouchService('visits', 'http://51.254.135.229:5984')
+let username = 'bob'
+let visits = new PouchService('userdb-' + hexEncode(username), 'http://bob:password@localhost:5984')
+
+// Handle error if database does not exist?  Auth would fail first
 
 export default class App extends Component {
 
@@ -35,7 +39,6 @@ export default class App extends Component {
 
   handleChange = (changes) => {
     this.updateVisitsList()
-    // console.log(changes.doc)
   }
 
   updateVisitsList() {
@@ -96,7 +99,3 @@ export default class App extends Component {
   }
 
 }
-
-          // <span className="visit-change">
-          //   <button onClick={() => { this.changeVisit(v) } }>Change</button>
-          // </span>
