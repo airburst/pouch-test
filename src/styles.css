@@ -54,3 +54,7 @@ body {
 .btn {
     margin-right: 10px;
 }
+
+.completed {
+    background-color: #e2e2e2;
+}

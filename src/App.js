@@ -5,7 +5,7 @@ import { hexEncode } from './services/hexEncoder'
 
 //const visits = new PouchService('visits', 'http://51.254.135.229:5984')
 let username = 'bob'
-let visits = new PouchService('userdb-' + hexEncode(username), 'http://bob:password@localhost:5984')
+let visitsService = new PouchService('userdb-' + hexEncode(username), 'http://bob:password@localhost:5984')
 
 // Handle error if database does not exist?  Auth would fail first
 
@@ -29,12 +29,12 @@ export default class App extends Component {
 
   componentDidMount() {
     this.updateVisitsList()
-    visits.subscribe(this.handleChange)
-    visits.sync()
+    visitsService.subscribe(this.handleChange)
+    visitsService.sync()
   }
 
   componentWillUnmount() {
-    visits.unsubscribe()
+    visitsService.unsubscribe()
   }
 
   handleChange = (changes) => {
@@ -42,26 +42,26 @@ export default class App extends Component {
   }
 
   updateVisitsList() {
-    visits.fetchAll().then(data => {
+    visitsService.fetchAll().then(data => {
       this.setState({ visits: data.map(v => { return v.doc }) })
     })
   }
 
   addVisit = (person) => {
-    visits.add(person).then(result => console.log('Added Visit', result))
+    visitsService.add(person).then(result => console.log('Added Visit', result))
   }
 
   removeVisit = (id) => {
-    visits.remove(id).then(result => console.log('Removed Visit', result))
+    visitsService.remove(id).then(result => console.log('Removed Visit', result))
   }
 
   completeVisit = (record) => {
     let completedRecord = Object.assign({}, record, { status: 'completed' })
-    visits.update(completedRecord).then(result => console.log('Completed Visit', result))
+    visitsService.update(completedRecord).then(result => console.log('Completed Visit', result))
   }
 
   changeVisit = (doc) => {
-    visits.update(doc).then(result => console.log('Updated Visit', result))
+    visitsService.update(doc).then(result => console.log('Updated Visit', result))
   }
 
   selectPerson(person) {
@@ -71,17 +71,27 @@ export default class App extends Component {
 
   render() {
     let visitList = this.state.visits.map((v) => {
+      let completed = (v.status === 'completed')
+      let rowClass = (completed) ? "visit-row completed" : "visit-row"
       return (
-        <div key={v._id} className="visit-row" onClick={() => { this.selectPerson(v) } }>
+        <div
+          key={v._id}
+          className={rowClass}
+          onClick={() => { this.selectPerson(v) } }
+          >
           <span className="visit-id">{v.personId}</span>
           <span className="visit-name">{v.firstname} {v.lastname}</span>
           <span className="fill"></span>
-          <span className="visit-complete">
-            <button onClick={() => { this.completeVisit(v) } }>Complete</button>
-          </span>
-          <span className="visit-remove">
-            <button onClick={() => { this.removeVisit(v._id) } }>Remove</button>
-          </span>
+          {(!completed) ?
+            <div>
+              <span className="visit-complete">
+                <button onClick={() => { this.completeVisit(v) } }>Complete</button>
+              </span>
+              <span className="visit-remove">
+                <button onClick={() => { this.removeVisit(v._id) } }>Remove</button>
+              </span>
+            </div>
+            : null}
         </div>
       )
     })
@@ -93,7 +103,7 @@ export default class App extends Component {
         <Form
           person={this.state.selectedPerson}
           addVisit={this.addVisit}
-          changeVisit={this.changeVisit}/>
+          changeVisit={this.changeVisit} />
       </div>
     )
   }
