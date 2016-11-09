@@ -2,12 +2,30 @@ import PouchDB from 'pouchdb'
 
 export class PouchService {
 
-    constructor(database, remoteServer) {
+    constructor(database, remoteServer, username, password) {
         this.localDb = database
-        this.db = new PouchDB(this.localDb)
+        this.db = new PouchDB(this.localDb, {
+            auth: {
+                username: username,
+                password: password
+            },
+            auto_compaction: true,
+            skipSetup: true
+        })
         this.syncToken = {}
         this.willSync = (remoteServer) ? true : false
         this.remoteDb = (this.willSync) ? remoteServer + '/' + database : null
+    }
+
+    auth() {
+        fetch('http://localhost:5986/_session', {
+            method: 'post',
+            headers: { 'Content-type': 'application/json' },
+            body: JSON.stringify({ name: 'bob', password: 'password' })
+        })
+            //.then(json)
+            .then(data => { console.log('DEBUG: Auth response', data) })
+            .catch(error => { console.log('DEBUG: Auth failed', error) })
     }
 
     makeDoc(doc) {
@@ -47,7 +65,7 @@ export class PouchService {
 
     update(details) {
         return new Promise((resolve, reject) => {
-            if (!details._id) { reject({ err: 'No id provided - cannot complete update' })}
+            if (!details._id) { reject({ err: 'No id provided - cannot complete update' }) }
             this.db.get(details._id)
                 .then((doc) => { return this.db.put(details) })
                 .then((result) => { resolve(result) })
@@ -82,9 +100,20 @@ export class PouchService {
 
     sync() {
         if (this.willSync) {
+            // db.logIn(this.username, this.password)
+            //     .then(response => {
+            //         console.log('login', response)
+            //         if (err) {
+            //             if (err.name === 'unauthorized') {
+            //                 console.log('Unauthorised')
+            //             } else {
             this.db.sync(this.remoteDb, { live: true, retry: true })
                 .on('error', console.log.bind(console));
             console.log('Syncing with ' + this.remoteDb)
+            //         }
+            //     }
+            // })
+            // .catch(err => console.log(err))
         }
     }
 }
