@@ -18,7 +18,7 @@ export class PouchService {
     }
 
     auth() {
-        fetch('http://localhost:5986/_session', {
+        fetch('http://192.168.154.136:5984/_session', {
             method: 'post',
             headers: { 'Content-type': 'application/json' },
             body: JSON.stringify({ name: 'bob', password: 'password' })

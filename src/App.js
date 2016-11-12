@@ -6,7 +6,7 @@ import { hexEncode } from './services/hexEncoder'
 const username = 'bob'
 const pass = 'password'
 const dbName = () => { return `userdb-${hexEncode(username)}` }
-const remoteName = () => { return `http://${username}:${pass}@localhost:5984` }
+const remoteName = () => { return `http://${username}:${pass}@192.168.154.136:5984` }
 
 let visitsService = new PouchService(dbName(), remoteName(), username, pass)
 
@@ -31,8 +31,8 @@ export default class App extends Component {
     componentDidMount() {
         this.updateVisitsList()
         visitsService.auth()
-        // visitsService.subscribe(this.handleChange)
-        // visitsService.sync()
+        visitsService.subscribe(this.handleChange)
+        visitsService.sync()
     }
 
     componentWillUnmount() {
