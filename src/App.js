@@ -30,7 +30,6 @@ export default class App extends Component {
 
     componentDidMount() {
         this.updateVisitsList()
-        visitsService.auth()
         visitsService.subscribe(this.handleChange)
         visitsService.sync()
             .then(result => { console.log(result) })

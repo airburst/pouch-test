@@ -24,16 +24,6 @@ export class PouchService {
             : null
     }
 
-    auth() {
-        fetch(this.remoteServer + '/_session', {
-            method: 'post',
-            headers: { 'Content-type': 'application/json' },
-            body: JSON.stringify({ name: this.user, password: this.pass })
-        })
-            .then(data => { /*console.log('DEBUG: Auth response', data)*/ })
-            .catch(error => { console.log('DEBUG: Auth failed', error) })
-    }
-
     makeDoc(doc) {
         const id = (doc._id && (doc._id !== "")) ? doc._id : new Date().toISOString()
         doc._rev = undefined
