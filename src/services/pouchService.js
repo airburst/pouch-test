@@ -3,8 +3,10 @@ import PouchDB from 'pouchdb'
 export class PouchService {
 
     constructor(database, remoteServer, username, password) {
-        this.localDb = database
-        this.db = new PouchDB(this.localDb, {
+        this.database = database
+        this.user = username
+        this.pass = password
+        this.db = new PouchDB(database, {
             auth: {
                 username: username,
                 password: password
@@ -14,17 +16,21 @@ export class PouchService {
         })
         this.syncToken = {}
         this.willSync = (remoteServer) ? true : false
-        this.remoteDb = (this.willSync) ? remoteServer + '/' + database : null
+        this.remoteServer = remoteServer
+        this.syncUrl = (this.willSync)
+            ? 'http://' + username + ':' + password + '@'
+            + remoteServer.replace('https://', '').replace('http://', '')
+            + '/' + database
+            : null
     }
 
     auth() {
-        fetch('http://192.168.154.136:5984/_session', {
+        fetch(this.remoteServer + '/_session', {
             method: 'post',
             headers: { 'Content-type': 'application/json' },
-            body: JSON.stringify({ name: 'bob', password: 'password' })
+            body: JSON.stringify({ name: this.user, password: this.pass })
         })
-            //.then(json)
-            .then(data => { console.log('DEBUG: Auth response', data) })
+            .then(data => { /*console.log('DEBUG: Auth response', data)*/ })
             .catch(error => { console.log('DEBUG: Auth failed', error) })
     }
 
@@ -91,7 +97,7 @@ export class PouchService {
             .on('change', (change) => { handleUpdate(change) })
             .on('complete', (info) => { console.log('Subscription ended', info) })
             .on('error', function (err) { console.log('Subscription error', err) })
-        console.log('Subscribed to ' + this.localDb)
+        console.log('Subscribed to ' + this.database)
     }
 
     unsubscribe() {
@@ -100,20 +106,11 @@ export class PouchService {
 
     sync() {
         if (this.willSync) {
-            // db.logIn(this.username, this.password)
-            //     .then(response => {
-            //         console.log('login', response)
-            //         if (err) {
-            //             if (err.name === 'unauthorized') {
-            //                 console.log('Unauthorised')
-            //             } else {
-            this.db.sync(this.remoteDb, { live: true, retry: true })
-                .on('error', console.log.bind(console));
-            console.log('Syncing with ' + this.remoteDb)
-            //         }
-            //     }
-            // })
-            // .catch(err => console.log(err))
+            return new Promise((resolve, reject) => {
+                this.db.sync(this.syncUrl, { live: true, retry: true })
+                    .on('active', resolve('Syncing...'))
+                    .on('error', reject('Unable to sync'))
+            })
         }
     }
 }

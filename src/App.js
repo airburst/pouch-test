@@ -4,11 +4,11 @@ import { PouchService } from './services/pouchService'
 import { hexEncode } from './services/hexEncoder'
 
 const username = 'bob'
-const pass = 'password'
-const dbName = () => { return `userdb-${hexEncode(username)}` }
-const remoteName = () => { return `http://${username}:${pass}@192.168.154.136:5984` }
+const password = 'password'
+const database = () => { return `userdb-${hexEncode(username)}` }
+const remoteUrl = () => { return `http://couchdb.fairhursts.net:5984` }
 
-let visitsService = new PouchService(dbName(), remoteName(), username, pass)
+let visitsService = new PouchService(database(), remoteUrl(), username, password)
 
 export default class App extends Component {
 
@@ -33,6 +33,8 @@ export default class App extends Component {
         visitsService.auth()
         visitsService.subscribe(this.handleChange)
         visitsService.sync()
+            .then(result => { console.log(result) })
+            .catch(err => { console.log(err) })
     }
 
     componentWillUnmount() {
